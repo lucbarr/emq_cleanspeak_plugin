@@ -1,4 +1,4 @@
-defmodule EmqThrottlePlugin.Mixfile do
+defmodule EmqCleanspeakPlugin.Mixfile do
   use Mix.Project
 
   def project do
@@ -23,15 +23,19 @@ defmodule EmqThrottlePlugin.Mixfile do
   def application do
     [
       extra_applications: [:logger, :redix],
-      mod: {EmqThrottlePlugin, []}
+      mod: {EmqCleanspeakPlugin, []}
     ]
   end
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:redix, ">= 0.0.0"},
-      {:coverex, "~> 1.4.10", only: :test},
+      {:ssl_verify_fun, "1.1.6", override: true},
+      {:httpoison, "~> 1.5.1"},
+      {:jason, "~> 1.2"},
+
+ #     {:redix, ">= 0.0.0"},
+ #     {:coverex, "~> 1.4.10", only: :test},
       {:emqttd,
        github: "emqtt/emqttd",
        only: [:test],
