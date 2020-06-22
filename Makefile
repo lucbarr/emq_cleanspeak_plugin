@@ -5,7 +5,9 @@ PATH := $(CURDIR)/elixir/bin:$(PATH)
 .PHONY: test
 
 all: elixir/lib/elixir/ebin/elixir.app
+	echo "compiling the app"
 	mix local.hex --force
+	mix local.rebar --force
 	mix deps.get
 	mix compile
 	-rm -rf $(CURDIR)/elixir/lib/mix/test
