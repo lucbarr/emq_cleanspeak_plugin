@@ -9,7 +9,6 @@ defmodule EmqCleanspeakPlugin.Mixfile do
       start_permanent: Mix.env == :prod,
       deps: deps(),
       aliases: aliases(),
-      test_coverage: [tool: Coverex.Task],
     ]
   end
 
@@ -22,7 +21,7 @@ defmodule EmqCleanspeakPlugin.Mixfile do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :redix],
+      extra_applications: [:logger],
       mod: {EmqCleanspeakPlugin, []}
     ]
   end
@@ -34,8 +33,6 @@ defmodule EmqCleanspeakPlugin.Mixfile do
       {:httpoison, "~> 1.5.1"},
       {:jason, "~> 1.2"},
 
- #     {:redix, ">= 0.0.0"},
- #     {:coverex, "~> 1.4.10", only: :test},
       {:emqttd,
        github: "emqtt/emqttd",
        only: [:test],

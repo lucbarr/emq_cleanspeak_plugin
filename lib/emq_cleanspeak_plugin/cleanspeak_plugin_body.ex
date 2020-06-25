@@ -24,15 +24,25 @@ defmodule EmqCleanspeakPlugin.Body do
     end
     
     def on_message_publish(msg, _env) do
-        Logger.debug fn -> "on_message_publish: #{msg}" end
-
         {payload, topic} = {mqtt_message(msg, :payload), mqtt_message(msg, :topic)}
-        filtered_message = Filter.filter(payload,topic)
-        msg = mqtt_message(msg, payload: filtered_message)
-        
-        {:ok, msg}
+
+        Logger.debug fn ->
+          "on message publish called:" <> payload <> ";" <> topic
+        end
+
+        case topic do
+          "$SYS/" <> _ ->  {:ok, msg}
+          _ ->
+            Logger.debug fn ->
+              "filtering message"
+            end
+
+            filtered_message = Filter.filter(payload,topic)
+            msg = mqtt_message(msg, payload: filtered_message)
+            {:ok, msg}
+        end
     end
-    
+
 end
 
 
