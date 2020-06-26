@@ -2,6 +2,7 @@ defmodule EmqCleanspeakPlugin.Body do
 
     alias EmqCleanspeakPlugin.{Filter}
     require Logger
+    require Jason
 
     require Record
     import Record, only: [defrecord: 2, extract: 2]
@@ -25,7 +26,6 @@ defmodule EmqCleanspeakPlugin.Body do
     
     def on_message_publish(msg, _env) do
         {payload, topic} = {mqtt_message(msg, :payload), mqtt_message(msg, :topic)}
-
         Logger.debug fn ->
           "on message publish called:" <> payload <> ";" <> topic
         end
@@ -37,10 +37,22 @@ defmodule EmqCleanspeakPlugin.Body do
               "filtering message"
             end
 
-            filtered_message = Filter.filter(payload,topic)
-            msg = mqtt_message(msg, payload: filtered_message)
+            new_payload = build_filtered_payload(payload, topic)
+            msg = mqtt_message(msg, payload: new_payload)
             {:ok, msg}
         end
+    end
+
+    def build_filtered_payload(payload, topic) do
+        payload_json = Jason.decode!(payload)
+
+        payload_message = payload_json["message"]
+        filtered_message = Filter.filter(payload_message,topic)
+
+        payload_json = %{payload_json | "message" => filtered_message}
+        new_payload = Jason.encode!(payload_json)
+
+        new_payload
     end
 
 end
