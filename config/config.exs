@@ -9,7 +9,7 @@ use Mix.Config
 # 3rd-party users, it should be done in your "mix.exs" file.
 #
 
-config :logger, level: System.get_env("CLEANSPEAK_PLUGIN_LOG_LEVEL") || "info"
+config :logger, level: String.to_atom(System.get_env("CLEANSPEAK_PLUGIN_LOG_LEVEL") || "info")
 
 # You can configure your application as:
 #
