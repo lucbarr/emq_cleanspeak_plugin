@@ -13,6 +13,8 @@ defmodule EmqCleanspeakPlugin.Filter do
   @default_headers [{"Content-Type", "application/json"}, {"Authorization", @cleanspeak_token}]
 
   def filter(message, topic, config \\ %{enabled: @filter_enabled, filtered_topics: @filtered_topics}) do
+    Logger.debug "filtering message;topic: #{message};#{topic}"
+
     case config.enabled && is_filtered_topic?(topic, config.filtered_topics) do
       true -> 
         case request_filter(message) do
