@@ -17,11 +17,15 @@ defmodule EmqCleanspeakPlugin.Filter do
 
     case config.enabled && is_filtered_topic?(topic, config.filtered_topics) do
       true -> 
+        Logger.debug "filtering enabled for topic #{topic}"
         case request_filter(message) do
           {:ok, filtered_message} -> filtered_message
           {_, _filtered_message} -> message
         end
-      false ->  message
+      false ->
+        Logger.debug "filtering disabled for topic #{topic}"
+        Logger.debug "filter enabled: #{@filter_enabled}; filtered topics: #{@filtered_topics}"
+        message
     end
 
   end
@@ -31,11 +35,13 @@ defmodule EmqCleanspeakPlugin.Filter do
   end
 
   defp request_filter(message) do
+    Logger.debug "requesting for filter"
     body = Jason.encode!(%{"blacklist" => %{"minimumSeverity" => @minimum_severity}, "content" => message})
 
     case HTTPoison.post(@filter_url, body, @default_headers) do
       {:ok, response} -> 
         filtered_message = Jason.decode!(response.body)["replacement"]
+        Logger.debug "filtered message #{filtered_message}"
         {:ok, filtered_message}
       _ ->
         Logger.error fn ->

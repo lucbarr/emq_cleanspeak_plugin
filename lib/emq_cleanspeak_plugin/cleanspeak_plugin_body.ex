@@ -37,22 +37,31 @@ defmodule EmqCleanspeakPlugin.Body do
               "filtering message"
             end
 
-            new_payload = build_filtered_payload(payload, topic)
-            msg = mqtt_message(msg, payload: new_payload)
+            msg =
+            case build_filtered_payload(payload, topic) do
+              {:ok, new_payload} ->
+                mqtt_message(msg, payload: new_payload)
+              {:notok, _payload} ->
+                Logger.warn "failed to build filtered payload"
+                msg
+            end
+
             {:ok, msg}
         end
     end
 
     def build_filtered_payload(payload, topic) do
-        payload_json = Jason.decode!(payload)
+        case Jason.decode(payload) do
+          {:error, _} -> {:notok, payload}
+          {_, payload_json} ->
+            payload_message = payload_json["message"]
+            filtered_message = Filter.filter(payload_message,topic)
 
-        payload_message = payload_json["message"]
-        filtered_message = Filter.filter(payload_message,topic)
+            payload_json = %{payload_json | "message" => filtered_message}
+            new_payload = Jason.encode!(payload_json)
 
-        payload_json = %{payload_json | "message" => filtered_message}
-        new_payload = Jason.encode!(payload_json)
-
-        new_payload
+            {:ok, new_payload}
+        end
     end
 
 end
