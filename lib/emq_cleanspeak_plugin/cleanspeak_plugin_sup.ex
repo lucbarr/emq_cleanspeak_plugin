@@ -11,6 +11,8 @@ defmodule EmqCleanspeakPlugin.Supervisor do
 
     HTTPoison.start()
 
+    EmqCleanspeakPlugin.Filter.init()
+
     # supervise/2 is imported from Supervisor.Spec
     supervise(children, strategy: :one_for_one)
   end
