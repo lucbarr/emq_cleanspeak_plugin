@@ -13,6 +13,8 @@ defmodule EmqCleanspeakPlugin.Supervisor do
 
     EmqCleanspeakPlugin.Filter.init()
 
+    Logger.configure level: String.to_atom(System.get_env("CLEANSPEAK_PLUGIN_LOG_LEVEL") || "info")
+
     # supervise/2 is imported from Supervisor.Spec
     supervise(children, strategy: :one_for_one)
   end
