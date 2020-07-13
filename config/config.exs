@@ -7,14 +7,17 @@ use Mix.Config
 # file won't be loaded nor affect the parent project. For this reason,
 # if you want to provide default values for your application for
 # 3rd-party users, it should be done in your "mix.exs" file.
+#
+
+config :logger, level: String.to_atom(System.get_env("CLEANSPEAK_PLUGIN_LOG_LEVEL") || "info")
 
 # You can configure your application as:
 #
-#     config :emq_throttle_plugin, key: :value
+#     config :emq_cleanspeak_plugin, key: :value
 #
 # and access this configuration in your application as:
 #
-#     Application.get_env(:emq_throttle_plugin, :key)
+#     Application.get_env(:emq_cleanspeak_plugin, :key)
 #
 # You can also configure a 3rd-party app:
 #
